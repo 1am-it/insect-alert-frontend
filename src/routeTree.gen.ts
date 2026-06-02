@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PreviewVraagMeerRouteImport } from './routes/preview.vraag-meer'
 import { Route as PreviewProductenRouteImport } from './routes/preview.producten'
+import { Route as PreviewListCardRouteImport } from './routes/preview.list-card'
 import { Route as PreviewDeflectionCardRouteImport } from './routes/preview.deflection-card'
 import { Route as PreviewDecoderCardRouteImport } from './routes/preview.decoder-card'
 import { Route as PreviewClarificationCardRouteImport } from './routes/preview.clarification-card'
@@ -30,6 +31,11 @@ const PreviewVraagMeerRoute = PreviewVraagMeerRouteImport.update({
 const PreviewProductenRoute = PreviewProductenRouteImport.update({
   id: '/preview/producten',
   path: '/preview/producten',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewListCardRoute = PreviewListCardRouteImport.update({
+  id: '/preview/list-card',
+  path: '/preview/list-card',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviewDeflectionCardRoute = PreviewDeflectionCardRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/preview/clarification-card': typeof PreviewClarificationCardRoute
   '/preview/decoder-card': typeof PreviewDecoderCardRoute
   '/preview/deflection-card': typeof PreviewDeflectionCardRoute
+  '/preview/list-card': typeof PreviewListCardRoute
   '/preview/producten': typeof PreviewProductenRoute
   '/preview/vraag-meer': typeof PreviewVraagMeerRoute
 }
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/preview/clarification-card': typeof PreviewClarificationCardRoute
   '/preview/decoder-card': typeof PreviewDecoderCardRoute
   '/preview/deflection-card': typeof PreviewDeflectionCardRoute
+  '/preview/list-card': typeof PreviewListCardRoute
   '/preview/producten': typeof PreviewProductenRoute
   '/preview/vraag-meer': typeof PreviewVraagMeerRoute
 }
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/preview/clarification-card': typeof PreviewClarificationCardRoute
   '/preview/decoder-card': typeof PreviewDecoderCardRoute
   '/preview/deflection-card': typeof PreviewDeflectionCardRoute
+  '/preview/list-card': typeof PreviewListCardRoute
   '/preview/producten': typeof PreviewProductenRoute
   '/preview/vraag-meer': typeof PreviewVraagMeerRoute
 }
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/preview/clarification-card'
     | '/preview/decoder-card'
     | '/preview/deflection-card'
+    | '/preview/list-card'
     | '/preview/producten'
     | '/preview/vraag-meer'
   fileRoutesByTo: FileRoutesByTo
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/preview/clarification-card'
     | '/preview/decoder-card'
     | '/preview/deflection-card'
+    | '/preview/list-card'
     | '/preview/producten'
     | '/preview/vraag-meer'
   id:
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/preview/clarification-card'
     | '/preview/decoder-card'
     | '/preview/deflection-card'
+    | '/preview/list-card'
     | '/preview/producten'
     | '/preview/vraag-meer'
   fileRoutesById: FileRoutesById
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   PreviewClarificationCardRoute: typeof PreviewClarificationCardRoute
   PreviewDecoderCardRoute: typeof PreviewDecoderCardRoute
   PreviewDeflectionCardRoute: typeof PreviewDeflectionCardRoute
+  PreviewListCardRoute: typeof PreviewListCardRoute
   PreviewProductenRoute: typeof PreviewProductenRoute
   PreviewVraagMeerRoute: typeof PreviewVraagMeerRoute
 }
@@ -143,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/preview/producten'
       fullPath: '/preview/producten'
       preLoaderRoute: typeof PreviewProductenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview/list-card': {
+      id: '/preview/list-card'
+      path: '/preview/list-card'
+      fullPath: '/preview/list-card'
+      preLoaderRoute: typeof PreviewListCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview/deflection-card': {
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewClarificationCardRoute: PreviewClarificationCardRoute,
   PreviewDecoderCardRoute: PreviewDecoderCardRoute,
   PreviewDeflectionCardRoute: PreviewDeflectionCardRoute,
+  PreviewListCardRoute: PreviewListCardRoute,
   PreviewProductenRoute: PreviewProductenRoute,
   PreviewVraagMeerRoute: PreviewVraagMeerRoute,
 }

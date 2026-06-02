@@ -2,6 +2,7 @@ import * as React from "react";
 import { DecoderCard } from "@/components/DecoderCard";
 import { DeflectionCard } from "@/components/DeflectionCard";
 import { ClarificationCard } from "@/components/ClarificationCard";
+import { ListCard } from "@/components/ListCard";
 import { StickerCard } from "@/components/insectalert/StickerCard";
 import { Blob } from "@/components/insectalert/Blob";
 import type { ClassifierResponse } from "@/lib/insectalert-api";
@@ -44,6 +45,14 @@ export function QuestionResolver({ classifierResponse }: QuestionResolverProps) 
     return (
       <DecoderCard
         dataQuery={dataQuery as React.ComponentProps<typeof DecoderCard>["dataQuery"]}
+      />
+    );
+  }
+
+  if (component === "list-card") {
+    return (
+      <ListCard
+        dataQuery={dataQuery as React.ComponentProps<typeof ListCard>["dataQuery"]}
       />
     );
   }
