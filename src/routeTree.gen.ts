@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PreviewVraagMeerRouteImport } from './routes/preview.vraag-meer'
+import { Route as PreviewTimelineCardRouteImport } from './routes/preview.timeline-card'
 import { Route as PreviewProductenRouteImport } from './routes/preview.producten'
 import { Route as PreviewListCardRouteImport } from './routes/preview.list-card'
 import { Route as PreviewDeflectionCardRouteImport } from './routes/preview.deflection-card'
@@ -26,6 +27,11 @@ const IndexRoute = IndexRouteImport.update({
 const PreviewVraagMeerRoute = PreviewVraagMeerRouteImport.update({
   id: '/preview/vraag-meer',
   path: '/preview/vraag-meer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewTimelineCardRoute = PreviewTimelineCardRouteImport.update({
+  id: '/preview/timeline-card',
+  path: '/preview/timeline-card',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviewProductenRoute = PreviewProductenRouteImport.update({
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/preview/deflection-card': typeof PreviewDeflectionCardRoute
   '/preview/list-card': typeof PreviewListCardRoute
   '/preview/producten': typeof PreviewProductenRoute
+  '/preview/timeline-card': typeof PreviewTimelineCardRoute
   '/preview/vraag-meer': typeof PreviewVraagMeerRoute
 }
 export interface FileRoutesByTo {
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/preview/deflection-card': typeof PreviewDeflectionCardRoute
   '/preview/list-card': typeof PreviewListCardRoute
   '/preview/producten': typeof PreviewProductenRoute
+  '/preview/timeline-card': typeof PreviewTimelineCardRoute
   '/preview/vraag-meer': typeof PreviewVraagMeerRoute
 }
 export interface FileRoutesById {
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/preview/deflection-card': typeof PreviewDeflectionCardRoute
   '/preview/list-card': typeof PreviewListCardRoute
   '/preview/producten': typeof PreviewProductenRoute
+  '/preview/timeline-card': typeof PreviewTimelineCardRoute
   '/preview/vraag-meer': typeof PreviewVraagMeerRoute
 }
 export interface FileRouteTypes {
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/preview/deflection-card'
     | '/preview/list-card'
     | '/preview/producten'
+    | '/preview/timeline-card'
     | '/preview/vraag-meer'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/preview/deflection-card'
     | '/preview/list-card'
     | '/preview/producten'
+    | '/preview/timeline-card'
     | '/preview/vraag-meer'
   id:
     | '__root__'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/preview/deflection-card'
     | '/preview/list-card'
     | '/preview/producten'
+    | '/preview/timeline-card'
     | '/preview/vraag-meer'
   fileRoutesById: FileRoutesById
 }
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   PreviewDeflectionCardRoute: typeof PreviewDeflectionCardRoute
   PreviewListCardRoute: typeof PreviewListCardRoute
   PreviewProductenRoute: typeof PreviewProductenRoute
+  PreviewTimelineCardRoute: typeof PreviewTimelineCardRoute
   PreviewVraagMeerRoute: typeof PreviewVraagMeerRoute
 }
 
@@ -149,6 +162,13 @@ declare module '@tanstack/react-router' {
       path: '/preview/vraag-meer'
       fullPath: '/preview/vraag-meer'
       preLoaderRoute: typeof PreviewVraagMeerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview/timeline-card': {
+      id: '/preview/timeline-card'
+      path: '/preview/timeline-card'
+      fullPath: '/preview/timeline-card'
+      preLoaderRoute: typeof PreviewTimelineCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview/producten': {
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewDeflectionCardRoute: PreviewDeflectionCardRoute,
   PreviewListCardRoute: PreviewListCardRoute,
   PreviewProductenRoute: PreviewProductenRoute,
+  PreviewTimelineCardRoute: PreviewTimelineCardRoute,
   PreviewVraagMeerRoute: PreviewVraagMeerRoute,
 }
 export const routeTree = rootRouteImport

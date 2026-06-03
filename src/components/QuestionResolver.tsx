@@ -3,6 +3,7 @@ import { DecoderCard } from "@/components/DecoderCard";
 import { DeflectionCard } from "@/components/DeflectionCard";
 import { ClarificationCard } from "@/components/ClarificationCard";
 import { ListCard } from "@/components/ListCard";
+import { TimelineCard } from "@/components/TimelineCard";
 import { StickerCard } from "@/components/insectalert/StickerCard";
 import { Blob } from "@/components/insectalert/Blob";
 import type { ClassifierResponse } from "@/lib/insectalert-api";
@@ -53,6 +54,14 @@ export function QuestionResolver({ classifierResponse }: QuestionResolverProps) 
     return (
       <ListCard
         dataQuery={dataQuery as React.ComponentProps<typeof ListCard>["dataQuery"]}
+      />
+    );
+  }
+
+  if (component === "timeline-card") {
+    return (
+      <TimelineCard
+        dataQuery={dataQuery as React.ComponentProps<typeof TimelineCard>["dataQuery"]}
       />
     );
   }
