@@ -135,7 +135,14 @@ function ComparisonView({ ids }: { ids: string[] }) {
   const resolved: Pattern[] = [];
   const seen = new Set<string>();
   for (const raw of ids) {
-    const p = resolvePattern(raw);
+    if (typeof raw !== "string") continue;
+    // Classifier ids have no stable shape — observed "kleine meelworm"
+    // (spaces), "kleine-meelworm" (hyphens) and "kleine_meelworm"
+    // (underscores) across prompt versions. Normalise separators to spaces
+    // before resolving so any form matches. Done locally here, NOT inside
+    // resolvePattern, to avoid affecting single-lookup decoder cases.
+    const normalized = raw.replace(/[_-]/g, " ").trim();
+    const p = resolvePattern(normalized);
     if (!p) continue;
     if (seen.has(p.id)) continue;
     seen.add(p.id);
