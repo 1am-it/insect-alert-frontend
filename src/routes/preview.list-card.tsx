@@ -23,7 +23,8 @@ function PreviewListCardPage() {
             ListCard (preview)
           </h1>
           <p className="text-sm text-muted-foreground">
-            Standalone test van de list-card voor regulation-topics.
+            Standalone test van de list-card voor regulation-topics en
+            decoder-comparison.
           </p>
         </header>
 
@@ -39,6 +40,42 @@ function PreviewListCardPage() {
             topic: pending_insects (empty state)
           </p>
           <ListCard dataQuery={{ topic: "pending_insects" }} />
+        </section>
+
+        <section className="flex flex-col gap-2">
+          <p className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            comparison: kleine vs gele meelworm (twee labels)
+          </p>
+          <ListCard
+            dataQuery={{
+              lookup: "comparison",
+              ids: ["kleine meelworm", "gele meelworm"],
+            }}
+          />
+        </section>
+
+        <section className="flex flex-col gap-2">
+          <p className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            comparison: messy ids (derde term "meelworm" → dedupe)
+          </p>
+          <ListCard
+            dataQuery={{
+              lookup: "comparison",
+              ids: ["kleine meelworm", "gele meelworm", "meelworm"],
+            }}
+          />
+        </section>
+
+        <section className="flex flex-col gap-2">
+          <p className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            comparison: te weinig resolvebaar (fallback)
+          </p>
+          <ListCard
+            dataQuery={{
+              lookup: "comparison",
+              ids: ["onbekend xyz", "nog onbekender"],
+            }}
+          />
         </section>
       </div>
     </main>
