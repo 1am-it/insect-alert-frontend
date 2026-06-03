@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  ClarificationCard,
-  type ClarificationCardProps,
-} from "@/components/ClarificationCard";
+import { QuestionResolver } from "@/components/QuestionResolver";
+import type { ClassifierResponse } from "@/lib/insectalert-api";
 
 export const Route = createFileRoute("/preview/clarification-card")({
   head: () => ({
@@ -14,77 +12,78 @@ export const Route = createFileRoute("/preview/clarification-card")({
   component: PreviewClarificationCardPage,
 });
 
-const fixtures: Array<{ label: string; props: ClarificationCardProps }> = [
+/** Build an ambiguous classifier-response so the preview exercises the real
+ *  production path: QuestionResolver → ClarificationCard → pill → askQuestion()
+ *  → resolved card rendered in-place. */
+function ambiguous(
+  dataQuery: Record<string, unknown>,
+): ClassifierResponse {
+  return {
+    category: "ambiguous",
+    component: "clarification-card",
+    dataQuery,
+    deflectionTarget: null,
+    confidence: "low",
+  };
+}
+
+const fixtures: Array<{ label: string; response: ClassifierResponse }> = [
   {
-    label: "1. 'Is meelworm gezond?' — gezondheid vs toelating",
-    props: {
-      dataQuery: {
-        originalQuestion: "Is meelworm gezond?",
-        interpretations: [
-          {
-            label: "Voedingswaarde van meelworm",
-            rewrittenQuestion: "Wat is de voedingswaarde van gele meelworm?",
-          },
-          {
-            label: "Is meelworm veilig om te eten?",
-            rewrittenQuestion: "Is gele meelworm in de EU toegelaten als voedsel?",
-          },
-          {
-            label: "Allergische reacties",
-            rewrittenQuestion: "Kan ik allergisch zijn voor meelworm?",
-          },
-        ],
-      },
-    },
+    label: "1. Happy path — 'Is meelworm gezond?' (pill-klik lost in-place op)",
+    response: ambiguous({
+      originalQuestion: "Is meelworm gezond?",
+      interpretations: [
+        {
+          label: "Voedingswaarde van meelworm",
+          rewrittenQuestion: "Wat is de voedingswaarde van gele meelworm?",
+        },
+        {
+          label: "Is meelworm veilig om te eten?",
+          rewrittenQuestion: "Is gele meelworm in de EU toegelaten als voedsel?",
+        },
+        {
+          label: "Allergische reacties",
+          rewrittenQuestion: "Kan ik allergisch zijn voor meelworm?",
+        },
+      ],
+    }),
   },
   {
     label: "2. 'Karmijn — gevaarlijk of veilig?'",
-    props: {
-      dataQuery: {
-        originalQuestion: "Karmijn — gevaarlijk of veilig?",
-        interpretations: [
-          {
-            label: "Wat is karmijn (E120)?",
-            rewrittenQuestion: "Wat is karmijn (E120)?",
-          },
-          {
-            label: "Allergie of bijwerkingen",
-            rewrittenQuestion: "Kan karmijn (E120) allergische reacties veroorzaken?",
-          },
-          {
-            label: "EU-toelating",
-            rewrittenQuestion: "Is karmijn (E120) toegelaten in EU-voedsel?",
-          },
-        ],
-      },
-    },
+    response: ambiguous({
+      originalQuestion: "Karmijn — gevaarlijk of veilig?",
+      interpretations: [
+        { label: "Wat is karmijn (E120)?", rewrittenQuestion: "Wat is karmijn (E120)?" },
+        {
+          label: "Allergie of bijwerkingen",
+          rewrittenQuestion: "Kan karmijn (E120) allergische reacties veroorzaken?",
+        },
+        {
+          label: "EU-toelating",
+          rewrittenQuestion: "Is karmijn (E120) toegelaten in EU-voedsel?",
+        },
+      ],
+    }),
   },
   {
     label: "3. 'Hoe zit dat?' — te vaag",
-    props: {
-      dataQuery: {
-        originalQuestion: "Hoe zit dat?",
-        interpretations: [
-          {
-            label: "Insecten in voedsel algemeen",
-            rewrittenQuestion: "Welke insecten zijn in de EU toegelaten in voedsel?",
-          },
-          {
-            label: "Etikettering",
-            rewrittenQuestion: "Hoe herken ik insecten op een etiket?",
-          },
-        ],
-      },
-    },
+    response: ambiguous({
+      originalQuestion: "Hoe zit dat?",
+      interpretations: [
+        {
+          label: "Insecten in voedsel algemeen",
+          rewrittenQuestion: "Welke insecten zijn in de EU toegelaten in voedsel?",
+        },
+        {
+          label: "Etikettering",
+          rewrittenQuestion: "Hoe herken ik insecten op een etiket?",
+        },
+      ],
+    }),
   },
   {
-    label: "4. Edge case — geen interpretaties",
-    props: {
-      dataQuery: {
-        originalQuestion: "???",
-        interpretations: [],
-      },
-    },
+    label: "4. Edge case — geen interpretaties (empty-state)",
+    response: ambiguous({ originalQuestion: "???", interpretations: [] }),
   },
 ];
 
@@ -100,22 +99,16 @@ function PreviewClarificationCardPage() {
             ClarificationCard fixtures
           </h1>
           <p className="text-sm text-muted-foreground">
-            Visuele verificatie van <code>ClarificationCard</code> met vier
-            scenario's. Pill-klik roept{" "}
-            <code>/api/classify-question</code> opnieuw aan.
+            Gerenderd via <code>QuestionResolver</code> — een pill-klik roept{" "}
+            <code>askQuestion()</code> aan en vervangt de kaart in-place door het
+            opgeloste resultaat.
           </p>
         </header>
 
         {fixtures.map((f, i) => (
           <section key={i} className="flex flex-col gap-3">
             <p className="text-xs font-mono text-muted-foreground">{f.label}</p>
-            <ClarificationCard
-              {...f.props}
-              onResolved={(response, chosen) => {
-                // eslint-disable-next-line no-console
-                console.log("[ClarificationCard] resolved", { chosen, response });
-              }}
-            />
+            <QuestionResolver classifierResponse={f.response} />
           </section>
         ))}
       </div>

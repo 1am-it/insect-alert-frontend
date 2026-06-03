@@ -12,6 +12,13 @@ export type { ClassifierResponse };
 
 export type QuestionResolverProps = {
   classifierResponse: ClassifierResponse;
+  /**
+   * Whether an interactive clarification-card may resolve into a new card
+   * in-place. True at the top level; set false for the single nested
+   * re-render so the loop stays bounded to one step — no infinite recursion
+   * and no multi-step clarification chains (out of scope, 1AM-247).
+   */
+  enableClarificationResolve?: boolean;
 };
 
 function FallbackCard({ classifierResponse }: QuestionResolverProps) {
@@ -39,7 +46,33 @@ function FallbackCard({ classifierResponse }: QuestionResolverProps) {
   );
 }
 
-export function QuestionResolver({ classifierResponse }: QuestionResolverProps) {
+export function QuestionResolver({
+  classifierResponse,
+  enableClarificationResolve = true,
+}: QuestionResolverProps) {
+  // Holds the follow-up response after a clarification pill is chosen, so we
+  // can swap the ClarificationCard for the resolved card in-place.
+  const [resolved, setResolved] = React.useState<ClassifierResponse | null>(null);
+
+  // Reset resolution when a brand-new top-level response arrives (e.g. the
+  // user asks another question), otherwise a stale resolved card would stick.
+  const prevResponseRef = React.useRef(classifierResponse);
+  if (prevResponseRef.current !== classifierResponse) {
+    prevResponseRef.current = classifierResponse;
+    setResolved(null);
+  }
+
+  // A resolved clarification renders its follow-up card here. Disable further
+  // resolution one level down to keep the loop single-step and bounded.
+  if (resolved) {
+    return (
+      <QuestionResolver
+        classifierResponse={resolved}
+        enableClarificationResolve={false}
+      />
+    );
+  }
+
   const { component, dataQuery, deflectionTarget } = classifierResponse;
 
   if (component === "decoder-card") {
@@ -86,6 +119,11 @@ export function QuestionResolver({ classifierResponse }: QuestionResolverProps) 
       <ClarificationCard
         dataQuery={
           dataQuery as React.ComponentProps<typeof ClarificationCard>["dataQuery"]
+        }
+        onResolved={
+          enableClarificationResolve
+            ? (response) => setResolved(response)
+            : undefined
         }
       />
     );

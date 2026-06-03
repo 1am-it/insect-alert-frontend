@@ -3,7 +3,7 @@ import { StickerCard } from "@/components/insectalert/StickerCard";
 import { Blob } from "@/components/insectalert/Blob";
 import { PillButton } from "@/components/insectalert/PillButton";
 import { cn } from "@/lib/utils";
-import type { ClassifierResponse } from "@/components/QuestionResolver";
+import { askQuestion, type ClassifierResponse } from "@/lib/insectalert-api";
 
 export type ClarificationInterpretation = {
   label: string;
@@ -74,21 +74,8 @@ export function ClarificationCard({ dataQuery, onResolved }: ClarificationCardPr
     setPendingIndex(index);
     setError(null);
 
-    const apiBase =
-      import.meta.env.VITE_API_BASE_URL ?? "https://insect-alert.vercel.app";
-
     try {
-      const res = await fetch(`${apiBase}/api/classify-question`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: option.rewrittenQuestion }),
-      });
-      if (!res.ok) {
-        setError("De vraag kon niet opnieuw worden geanalyseerd.");
-        setPendingIndex(null);
-        return;
-      }
-      const data: ClassifierResponse = await res.json();
+      const data = await askQuestion(option.rewrittenQuestion);
       onResolved?.(data, option);
     } catch {
       setError("De vraag kon niet opnieuw worden geanalyseerd.");
